@@ -36,9 +36,17 @@ public class EntityWitherSkull extends EntityFireball {
         if (!this.world.isStatic) {
             if (movingobjectposition.entity != null) {
                 if (this.shooter != null) {
-                    if (movingobjectposition.entity.damageEntity(DamageSource.mobAttack(this.shooter), 8.0F) && !movingobjectposition.entity.isAlive()) {
-                        this.shooter.heal(5.0F, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.WITHER); // CraftBukkit
+                    // CraftBukkit start - DamageSource.mobAttack->DamageSource.projectile for non-wither based wither skulls
+                    if(this.shooter instanceof EntityWither) {
+                        if (movingobjectposition.entity.damageEntity(DamageSource.mobAttack(this.shooter), 8.0F) && !movingobjectposition.entity.isAlive()) { 
+                            this.shooter.heal(5.0F, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.WITHER); // CraftBukkit
+                        }
+                    } else {
+                        if (movingobjectposition.entity.damageEntity(DamageSource.fireball(this, this.shooter), 8.0F) && !movingobjectposition.entity.isAlive()) { 
+                            this.shooter.heal(5.0F, org.bukkit.event.entity.EntityRegainHealthEvent.RegainReason.WITHER); // CraftBukkit
+                        }
                     }
+                    // CraftBukkit end
                 } else {
                     movingobjectposition.entity.damageEntity(DamageSource.MAGIC, 5);
                 }
